@@ -1,4 +1,4 @@
-(function() {
+$(function () {
     // Ajax Setup
     $.ajaxPrefilter(function(options, originalOptions, jqXHR) {
         var token;
@@ -28,7 +28,7 @@
     });
 
     // Prevent double form submission
-    $('form').submit(function() {
+    $('form').submit(function () {
         var $form = $(this);
         $form.find(':submit').prop('disabled', true);
     });
@@ -37,7 +37,7 @@
     // autosize($('textarea.autosize'));
 
     // Mock the DELETE form requests.
-    $('[data-method]').not(".disabled").append(function() {
+    $('[data-method]').not(".disabled").append(function () {
         var methodForm = "\n";
         methodForm += "<form action='" + $(this).attr('href') + "' method='POST' style='display:none'>\n";
         methodForm += "<input type='hidden' name='_method' value='" + $(this).attr('data-method') + "'>\n";
@@ -46,11 +46,11 @@
         return methodForm;
     })
         .removeAttr('href')
-        .on('click', function() {
+        .on('click', function () {
             var button = $(this);
 
             if (button.hasClass('confirm-action')) {
-                askConfirmation(function() {
+                askConfirmation(function () {
                     button.find("form").submit();
                 });
             } else {
@@ -95,28 +95,32 @@
         };
     };
 
-    $(".sidebar-toggler").click(function(e) {
+    $(".sidebar-toggler").on('click', function (e) {
         e.preventDefault();
         $(".wrapper").toggleClass("toggled");
     });
 
-    $('.color-code').minicolors({
-        control: 'hue',
-        defaultValue: $(this).val() || '',
-        inline: false,
-        letterCase: 'lowercase',
-        opacity: false,
-        position: 'bottom left',
-        theme: 'bootstrap'
+    $('.color-code').each(function () {
+        var $this = $(this);
+
+        $this.minicolors({
+            control: 'hue',
+            defaultValue: $this.val() || '',
+            inline: false,
+            letterCase: 'lowercase',
+            opacity: false,
+            position: 'bottom left',
+            theme: 'bootstrap'
+        });
     });
 
     $('[data-toggle="tooltip"]').tooltip();
 
-    $('button.close').on('click', function() {
+    $('button.close').on('click', function () {
         $(this).parents('div.alert').addClass('hide');
     });
 
-    $('form[name=IncidentForm] select[name=component_id]').on('change', function() {
+    $('form[name=IncidentForm] select[name=component_id]').on('change', function () {
         var $option = $(this).find('option:selected');
         var $componentStatus = $('#component-status');
 
@@ -185,7 +189,7 @@
         new Sortable(list, {
             group: 'omega',
             handle: '.drag-handle',
-            onUpdate: function() {
+            onUpdate: function () {
                 var orderedIds = $.map(list.querySelectorAll('[data-orderable-id]'), function(elem) {
                     return $(elem).data('orderable-id');
                 });
@@ -197,10 +201,10 @@
                     data: {
                         ids: orderedIds
                     },
-                    success: function() {
+                    success: function () {
                         notifier.notify('Ordering updated.', 'success');
                     },
-                    error: function() {
+                    error: function () {
                         notifier.notify('Ordering not updated.', 'error');
                     }
                 });
@@ -209,7 +213,7 @@
     });
 
     // Toggle inline component statuses.
-    $('form.component-inline').on('click', 'input[type=radio]', function() {
+    $('form.component-inline').on('click', 'input[type=radio]', function () {
         var $form = $(this).parents('form');
         var formData = $form.serializeObject();
 
@@ -228,7 +232,7 @@
     });
 
     // Incident management
-    $('select[name=template]').on('change', function() {
+    $('select[name=template]').on('change', function () {
         var $this = $(this).find('option:selected'),
             slug   = $this.val();
 
@@ -245,7 +249,7 @@
                     $form.find('input[name=name]').val(tpl.name);
                     $form.find('textarea[name=message]').val(tpl.template);
                 },
-                error: function() {
+                error: function () {
                     (new Cachet.Notifier()).notify('There was an error finding that template.');
                 }
             });
@@ -253,7 +257,7 @@
     });
 
     // Banner removal JS
-    $('#remove-banner').click(function(){
+    $('#remove-banner').on('click', function (){
         $('#banner-view').remove();
         $('input[name=remove_banner]').val('1');
     });
@@ -306,7 +310,7 @@
                         (new Cachet.Notifier()).notify(error);
                     });
                 })
-                .always(function() {
+                .always(function () {
                     $btn.button('reset');
                 });
 
@@ -403,4 +407,4 @@
             if (_.isFunction(cancelCallback)) cancelCallback();
         });
     }
-}());
+});
